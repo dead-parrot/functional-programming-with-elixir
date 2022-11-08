@@ -24,7 +24,8 @@ defmodule Ex3 do
   [3, 6, 7]
   """
   # Dica: use a funcao String.length para obter o tamanho de uma string
-  def tamanho_strings(ls), do: nil
+  def tamanho_strings([]), do: []
+  def tamanho_strings(ls), do: map(ls, fn x -> String.length(x) end )
 
   @doc """
   Dada uma lista de strings contendo apenas dígitos numéricos, retorna uma
@@ -35,7 +36,8 @@ defmodule Ex3 do
   [42, 54, 999]
   """
   # Dica: use a função String.to_integer para converter cada string
-  def converte_para_inteiros(l), do: nil
+  def converte_para_inteiros([]), do: []
+  def converte_para_inteiros(l), do: map(l, fn x -> String.to_integer(x) end)
 
 
   @doc """
@@ -46,7 +48,8 @@ defmodule Ex3 do
   iex> Ex3.soma_100_lista([1, 2, 3, 4, 5])
   [101, 102, 103, 104, 105]
   """
-  def soma_100_lista(l), do: nil
+  def soma_100_lista([]), do: []
+  def soma_100_lista(l), do: map(l, fn x -> x + 100 end)
 
   # Existem situações em que queremos aplicar um deslocamento a todos os números
   # de uma coleção, por exemplo em aplicações de processamento de sinais ou de
@@ -61,7 +64,8 @@ defmodule Ex3 do
   iex> Ex3.soma_n_lista([1, 2, 3, 4, 5], 500)
   [501, 502, 503, 504, 505]
   """
-  def soma_n_lista(l, n), do: nil
+  def soma_n_lista([], _n), do: []
+  def soma_n_lista(l, n), do: map(l, fn x -> x + n end)
 
   @doc """
   Dada uma lista de strings, adiciona um prefixo a cada string da lista,
@@ -71,7 +75,8 @@ defmodule Ex3 do
   iex> Ex3.adiciona_prefixo(["fazer", "tornar", "bater"], "re")
   ["refazer", "retornar", "rebater"]
   """
-  def adiciona_prefixo(l, pre), do: nil
+  def adiciona_prefixo([]), do: []
+  def adiciona_prefixo(l, pre), do: map(l, fn x -> pre<>x end)
 
   @doc """
   Dada uma lista de strings, adiciona um sufixo a cada string da lista,
@@ -81,8 +86,8 @@ defmodule Ex3 do
   iex> Ex3.adiciona_sufixo(["geo", "bio", "crono"], "logia")
   ["geologia", "biologia", "cronologia"]
   """
-  def adiciona_sufixo(l, sufixo), do: nil
-
+  def adiciona_sufixo([]), do: []
+  def adiciona_sufixo(l, sufixo), do: map(l, fn x -> x <> sufixo end)
 
   # --- Parte 2: Reduções (fold_left, fold_right) --------------------
 
@@ -95,7 +100,8 @@ defmodule Ex3 do
   iex> Ex3.fold_right([1, 2, 3, 4], 0, fn (x, s) -> x + s end)
   10
   """
-  def fold_right(l, ini, f), do: nil
+  def fold_right([], ini, _f), do: ini
+  def fold_right([x | r], ini, f), do: f.(x, fold_right(r, ini, f))
 
   @doc """
   Dada uma lista de strings, retorna uma string que é a concatenação de todas
@@ -105,7 +111,8 @@ defmodule Ex3 do
   iex> Ex3.concatena_strings(["foo", "bar", "baz"])
   "foobarbaz"
   """
-  def concatena_strings(ls), do: nil
+  def concatena_strings([]), do: ""
+  def concatena_strings(l), do: fold_right(l, "", fn (x, y) -> x<>y end)
 
   @doc """
   Dada uma lista de valores booleanos, calcula o AND (E-lógico) de todos os
@@ -115,7 +122,8 @@ defmodule Ex3 do
   iex> Ex3.and_lista([true, false, true])
   false
   """
-  def and_lista(lb), do: nil
+  def and_lista([]), do: true
+  def and_lista(lb), do: fold_right(lb, true, fn (x, y) -> x and y end)
 
   @doc """
   Dada uma lista de valores booleanos, calcula o OR (OU-lógico) de todos os
@@ -125,7 +133,8 @@ defmodule Ex3 do
   iex> Ex3.or_lista([true, false, true])
   true
   """
-  def or_lista(lb), do: nil
+  def or_lista([]), do: false
+  def or_lista(lb), do: fold_right(lb, false, fn (x, y) -> x or y end)
 
   # fold-right sempre associa a operação f à direita, e isso pode ser
   # inadequado em muitos casos. Usando o modelo de substituição, podemos
@@ -167,8 +176,8 @@ defmodule Ex3 do
   iex> Ex3.fold_left([10, 20, 40], 1000, fn (r, x) -> r - x end)
   930
   """
-  def fold_left(l, ini, f), do: nil
-
+  def fold_left([], ini, _f), do: ini
+  def fold_left([x | r], ini, f), do: fold_left(r, f.(ini, x), f)
   @doc """
   Dada uma pontuação inicial e uma lista de deduções, calcula a pontuação
   final.
@@ -177,7 +186,8 @@ defmodule Ex3 do
   iex> Ex3.pontuacao_final(1000, [30, 40, 15])
   915
   """
-  def pontuacao_final(ini, deducoes), do: nil
+  def pontuacao_final(deducoes, []), do: deducoes
+  def pontuacao_final(deducoes, l), do: fold_left(l, deducoes, fn (x, y) -> x - y end)
 
   @doc """
   Dada uma lista de listas, concatena todas as listas e retorna o resultado.
@@ -186,7 +196,8 @@ defmodule Ex3 do
   iex> Ex3.concatena_listas([[1, 2], [3, 4], [7, 8, 9]])
   [1, 2, 3, 4, 7, 8, 9]
   """
-  def concatena_listas(ll), do: nil
+  def concatena_listas([]), do: []
+  def concatena_listas([x | r]), do: fold_left(r, x, fn (x, y) -> x++y end)
   # Dica: o operador ++ concatena duas listas
 
   # Opcional: a funcao concatena_listas é mais eficiente se implementada com
@@ -205,7 +216,8 @@ defmodule Ex3 do
   iex> Ex3.concat_strings_sep(["tapioca", "cuscuz", "queijo"], ", ")
   "tapioca, cuscuz, queijo"
   """
-  def concat_strings_sep(ls, sep), do: nil
+  def concat_strings_sep([], _sep), do: ""
+  def concat_strings_sep([x | r], sep), do: fold_left(r, x, fn (x, y) -> ((x <> sep) <> y) end)
 
 
   # --- Parte 3: Filtragem -------------------------------------------
@@ -218,8 +230,16 @@ defmodule Ex3 do
   iex> Ex3.filter([1, 22, 3, 7, 16], fn n -> n > 10 end)
   [22, 16]
   """
-  def filter(l, pred), do: nil
+  def filter([], _pred), do: []
+  def filter([x | r], pred) do
+    if pred.(x) do
+      [x | filter(r, pred)]
+    else
+      filter(r, pred)
+    end
+  end
 
+  #@spec strings_que_contem(any, any) :: nil
   @doc """
   strings_que_contem(ls, meio) retorna apenas as strings da lista ls que contem
   a string meio entre seus caracteres.
@@ -228,7 +248,8 @@ defmodule Ex3 do
   iex> Ex3.strings_que_contem(["foo", "euforia", "bar", "Moria", "tapioca"], "oria")
   ["euforia", "Moria"]
   """
-  def strings_que_contem(ls, meio), do: nil
+  def strings_que_contem([], _meio), do: []
+  def strings_que_contem([x | r], meio), do: filter([ x | r], fn x -> String.contains?((x), meio) end)
   # Dica: use a função String.contains? para decidir se uma string contem outra
 
   @doc """
@@ -239,5 +260,10 @@ defmodule Ex3 do
   iex> Ex3.par_3n_mais_1([1, 2, 3, 4, 5])
   [1, 3, 5]
   """
-  def par_3n_mais_1(l), do: nil
+
+  def eh_par(0), do: true
+  def eh_par(x), do: not eh_par(x-1)
+
+  def par_3n_mais_1([]), do: []
+  def par_3n_mais_1([x | r]), do: filter([x | r], fn x -> (eh_par(3*x+1)) end)
 end
